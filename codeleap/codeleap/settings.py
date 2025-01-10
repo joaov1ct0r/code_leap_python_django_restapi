@@ -13,6 +13,7 @@ from environs import Env
 import os
 import sys
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,16 +86,22 @@ WSGI_APPLICATION = 'codeleap.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASE_URL = f"postgresql://{env.str('POSTGRES_USER')}:{env.str('POSTGRES_PASSWORD')}@{env.str('POSTGRES_HOST')}:5432/{env.str('POSTGRES_DB')}"
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": env.str("POSTGRES_DB"),
-        "USER": env.str("POSTGRES_USER"),
-        "PASSWORD": env.str("POSTGRES_PASSWORD"),
-        "HOST": env.str("POSTGRES_HOST"),
-        "PORT": "5432",
-    },
+    "default": dj_database_url.config(default=DATABASE_URL)
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": env.str("POSTGRES_DB"),
+#         "USER": env.str("POSTGRES_USER"),
+#         "PASSWORD": env.str("POSTGRES_PASSWORD"),
+#         "HOST": env.str("POSTGRES_HOST"),
+#         "PORT": "5432",
+#     },
+# }
 
 if 'test' in sys.argv:
     DATABASES["default"] = {
