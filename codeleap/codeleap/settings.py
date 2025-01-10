@@ -27,20 +27,21 @@ POSTGRES_DB = ""
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-if 'test' in sys.argv :
-    DEBUG = True
-elif 'runserver' in sys.argv and '--no-color' in sys.argv:
+# if 'gunicorn' in sys.argv:
+if 'runserver' in sys.argv and '--no-color' in sys.argv:
     POSTGRES_USER = os.environ.get("POSTGRES_USER")
     POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
     POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
     POSTGRES_DB = os.environ.get("POSTGRES_DB")
     DEBUG = False
-else:
+elif 'runserver' in sys.argv:
     env.read_env(os.path.join(BASE_DIR.parent, '.env'), recurse=False)
     POSTGRES_USER = env.str("POSTGRES_USER")
     POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
     POSTGRES_HOST = env.str("POSTGRES_HOST")
     POSTGRES_DB = env.str("POSTGRES_DB")
+    DEBUG = True
+else:
     DEBUG = True
 
 # Quick-start development settings - unsuitable for production
