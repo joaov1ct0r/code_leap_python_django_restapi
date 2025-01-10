@@ -51,8 +51,13 @@ else:
 SECRET_KEY = 'django-insecure-mfleyys&4ha%4ez4y0w$723ai^6@e=f5nc-6f(y7o@r+03a_$='
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = []
 
+if 'runserver' in sys.argv and '--no-color' in sys.argv:
+    ALLOWED_HOSTS.append("*")
+elif 'runserver' in sys.argv:
+    ALLOWED_HOSTS.append("localhost")
+    ALLOWED_HOSTS.append("127.0.0.1")
 
 # Application definition
 
