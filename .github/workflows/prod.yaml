@@ -15,8 +15,8 @@ jobs:
         python-version: '3.10.12'
     - name: Install Dependencies
       run: |
-        python3 -m pip3 install --upgrade pip
-        pip3 install -r requirements.txt
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
     - name: Run Tests
       run: |
         python3 codeleap/manage.py test codeleap/api
