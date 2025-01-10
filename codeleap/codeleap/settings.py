@@ -20,10 +20,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env()
 
-if 'runserver' in sys.argv :
-    env.read_env(os.path.join(BASE_DIR.parent, '.env'), recurse=False)
+POSTGRES_USER = ""
+POSTGRES_PASSWORD = ""
+POSTGRES_HOST = ""
+POSTGRES_DB = ""
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+if 'test' in sys.argv :
+    DEBUG = True
+elif 'runserver' in sys.argv and '--no-color' in sys.argv:
+    POSTGRES_USER = os.environ.get("POSTGRES_USER")
+    POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+    POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+    POSTGRES_DB = os.environ.get("POSTGRES_DB")
+    DEBUG = False
 else:
-    env.read_env()
+    env.read_env(os.path.join(BASE_DIR.parent, '.env'), recurse=False)
+    POSTGRES_USER = env.str("POSTGRES_USER")
+    POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
+    POSTGRES_HOST = env.str("POSTGRES_HOST")
+    POSTGRES_DB = env.str("POSTGRES_DB")
+    DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,8 +49,6 @@ else:
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mfleyys&4ha%4ez4y0w$723ai^6@e=f5nc-6f(y7o@r+03a_$='
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
@@ -90,12 +106,6 @@ WSGI_APPLICATION = 'codeleap.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASE_URL = f"postgresql://{env.str('POSTGRES_USER')}:{env.str('POSTGRES_PASSWORD')}@{env.str('POSTGRES_HOST')}:5432/{env.str('POSTGRES_DB')}"
-
-DATABASES = {
-    "default": dj_database_url.config(default=DATABASE_URL)
-}
-
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -106,6 +116,12 @@ DATABASES = {
 #         "PORT": "5432",
 #     },
 # }
+
+DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:5432/{POSTGRES_DB}"
+
+DATABASES = {
+    "default": dj_database_url.config(default=DATABASE_URL)
+}
 
 if 'test' in sys.argv:
     DATABASES["default"] = {
